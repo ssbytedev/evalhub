@@ -226,6 +226,44 @@ latency goes up.
 - Lower `electionTimeoutMillis` in the replica set config and measure the
   failover gap again.
 
+## Future work
+
+### 1. Measured study
+
+Turn the experiments into repeatable trials and publish the results.
+
+- **Failover time:** p50/p99 over 50+ trials each for crash, stepdown and
+  partition, and how they change with `electionTimeoutMillis`.
+- **Write concern tradeoffs:** write latency and durability under `w:1`,
+  `w:"majority"` and `j:true`. Show that writes acknowledged under `w:1` can
+  be lost to rollback.
+- **Cache pressure:** read latency as the WiredTiger cache shrinks from 2 GB
+  to 0.25 GB against a fixed working set, with eviction stats from
+  `serverStatus().wiredTiger`.
+- **Oplog window:** how much replication lag the oplog covers at different
+  write rates, and the point where a lagging secondary can no longer catch up.
+
+Write it up with charts and explain *why* each result happens (for example,
+how Raft-style elections cause the stall you measured).
+
+### 2. Correctness checking (Jepsen-style)
+
+- Have clients record every acknowledged operation.
+- Inject faults: partitions, paused nodes, clock skew.
+- Check the recorded history for lost writes and stale reads under each
+  read/write concern combination.
+
+### 3. Build a storage component
+
+Build a small storage engine and test it with this lab's techniques (fault
+injection, latency probes):
+
+- an LSM-tree or B-tree key-value engine with a write-ahead log and crash
+  recovery, or
+- a Raft-replicated key-value store.
+
+Benchmark it against MongoDB on the same workloads.
+
 ## Reset
 
 ```sh
