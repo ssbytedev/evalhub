@@ -1,0 +1,18 @@
+# ~/evalhub-lab/docker-compose.yml
+services:
+  mongo1:
+    image: mongo:8.0
+    container_name: mongo1
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all",
+              "--oplogSize", "990", "--wiredTigerCacheSizeGB", "0.25"]
+  mongo2:
+    image: mongo:8.0
+    container_name: mongo2
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all",
+              "--oplogSize", "990", "--wiredTigerCacheSizeGB", "0.25"]
+  mongo3:
+    image: mongo:8.0
+    container_name: mongo3
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all",
+              "--oplogSize", "990", "--wiredTigerCacheSizeGB", "0.25"]
+
